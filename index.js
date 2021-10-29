@@ -26,12 +26,12 @@ const ban = async (message, input) => {
         bannedAccounts.push({ name: input[0], timestamp: readableToTimestamp(input[1]) });
         return message.reply('Added user!');
     } else {
-        message.reply(`Usage: ${PREFIX}ban "<<user>>" "<<time banned>>"`);
+        await message.reply(`Usage: ${PREFIX}ban "<<user>>" "<<time banned>>"`);
     }
 };
 
 const unban = async (message, input) => {
-    if(!input[0]) return message.reply(`Usage: ${PREFIX}unban "<<user>>"`);
+    if (!input[0]) return message.reply(`Usage: ${PREFIX}unban "<<user>>"`);
     const index = bannedAccounts.findIndex((acc) => acc.name === input[0]);
     if (index < 0) {
         return message.reply('User not found');
@@ -45,22 +45,27 @@ const showAccounts = async (message) => {
     bannedAccounts.sort((a, b) => a.timestamp < b.timestamp);
     const embed = new MessageEmbed().setColor('black');
     let i = bannedAccounts.length;
+    let nameString = '',
+        timeString = '';
     while (i--) {
         const timeLeft = bannedAccounts[i].timestamp - now;
         if (timeLeft < 0) {
             bannedAccounts.splice(i, 1);
             continue;
         }
-        embed.addField('Name', bannedAccounts[i].name, true);
-        embed.addField('Unbanned', timestampToReadable(timeLeft), true);
-        if (i !== 0) {
+        nameString += bannedAccounts[i].name + "\n";
+        timeString += timestampToReadable(timeLeft) + "\n";
+        /* if (i !== 0) {
             embed.addField('\u200B', '\u200B', true);
-        }
+        } */
     }
     if (bannedAccounts.length === 0) {
         embed.addField('Name', 'No users banned');
+    } else {
+        embed.addField('Name', nameString, true);
+        embed.addField('Unbanned', timeString, true);
     }
-    message.channel.send({ embeds: [embed] });
+    await message.channel.send({ embeds: [embed] });
 };
 
 const cmdRegex = /[^\s"]+|"([^"]*)"/gi;
