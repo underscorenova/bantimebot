@@ -2,7 +2,7 @@
   "name": "bantimebot",
   "main": "index.js",
   "scripts": {
-    "start": "node -r esm index.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "@discordjs/rest": "^0.1.0-canary.0",
