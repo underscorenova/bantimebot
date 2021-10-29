@@ -31,6 +31,7 @@ const ban = async (message, input) => {
 };
 
 const unban = async (message, input) => {
+    if(!input[0]) return message.reply(`Usage: ${PREFIX}unban "<<user>>"`);
     const index = bannedAccounts.findIndex((acc) => acc.name === input[0]);
     if (index < 0) {
         return message.reply('User not found');
