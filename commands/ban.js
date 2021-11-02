@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { readableToTimestamp } = require('../functions');
+const { readableToTimestamp, serialize } = require('../functions');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -19,8 +19,9 @@ module.exports = {
             return interaction.reply('User already added');
         }
         let text = readableToTimestamp(interaction.options.getString('bantime'));
-        if(!text) return interaction.reply('Cannot parse time');
+        if (!text) return interaction.reply('Cannot parse time');
         bannedAccounts.push({ name: interaction.options.getString('username'), timestamp: text });
+        serialize(interaction.client, bannedAccounts);
         return interaction.reply('Added user');
     }
 };

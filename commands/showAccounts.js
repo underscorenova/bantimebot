@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
-const { timestampToReadable } = require('../functions');
+const { timestampToReadable, serialize } = require('../functions');
 
 module.exports = {
     data: new SlashCommandBuilder().setName('accounts').setDescription('Show banned accounts'),
@@ -29,6 +29,7 @@ module.exports = {
             embed.addField('Name', nameString, true);
             embed.addField('Unbanned', timeString, true);
         }
+        serialize(interaction.client, bannedAccounts);
         interaction.reply({ embeds: [embed] });
     }
 };

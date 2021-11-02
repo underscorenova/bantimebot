@@ -1,7 +1,7 @@
 const config = require('./config');
 const { Client, Collection, MessageEmbed } = require('discord.js');
 const fs = require('fs');
-const { timestampToReadable, readableToTimestamp } = require('./functions');
+const { timestampToReadable, readableToTimestamp, serialize, deserialize } = require('./functions');
 
 const { TOKEN } = config;
 
@@ -24,6 +24,7 @@ const ban = async (message, input) => {
             return message.reply('User already added');
         }
         bannedAccounts.push({ name: input[0], timestamp: readableToTimestamp(input[1]) });
+        serialize(client, bannedAccounts);
         return message.reply('Added user!');
     } else {
         await message.reply(`Usage: ${PREFIX}ban "<<user>>" "<<time banned>>"`);
@@ -36,6 +37,7 @@ const unban = async (message, input) => {
     if (index < 0) {
         return message.reply('User not found');
     }
+    serialize(client, bannedAccounts);
     bannedAccounts.splice(index, 1);
     return message.reply('Unbanned user');
 };
@@ -65,6 +67,7 @@ const showAccounts = async (message) => {
         embed.addField('Name', nameString, true);
         embed.addField('Unbanned', timeString, true);
     }
+    serialize(client, bannedAccounts);
     await message.channel.send({ embeds: [embed] });
 };
 
@@ -94,6 +97,10 @@ client.on('messageCreate', async (message) => {
         console.log(e);
         console.log('roflcopter');
     }
+});
+
+client.on('ready', async () => {
+    bannedAccounts = await deserialize(client);
 });
 
 client.on('interactionCreate', async (interaction) => {
